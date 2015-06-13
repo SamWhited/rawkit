@@ -24,12 +24,9 @@ def test_calling_an_option_method_directly_should_error(opt_method):
 
 
 def test_setting_a_value(options):
-    # TODO: It would probably be better for these to operate on a Mock and
-    # check if __set__ was called.
-
     # Uses normal set
-    options.darkness = 1
-    assert options.darkness is 1
+    options.brightness = 1
+    assert options.brightness is 1
 
     # Uses a special setter
     options.bps = 16

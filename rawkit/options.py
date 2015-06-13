@@ -209,7 +209,7 @@ class Options(object):
         '_auto_brightness',
         '_auto_brightness_threshold',
         '_chromatic_aberration',
-        '_darkness',
+        '_sensel_threshold',
         '_half_size',
         '_noise_threshold',
         '_rgbg_interpolation',
@@ -429,17 +429,55 @@ class Options(object):
         """
         return False
 
-    @option(param='user_black', ctype=ctypes.c_int)
-    def darkness(self):
+    @option
+    def sensel_threshold(self):
         """
-        Raise the black level of a photo.
+        The sensel value below which we consider data to be sensor noise. If
+        your shadows are foggy, you may need to raise this.
 
-        :type: :class:`int`
+        If this option is set to a tuple of length 4, the level is set per
+        channel in RGBG order. Unlike
+        :class:`libraw.structs.libraw_output_params_t.user_cblack`, this option
+        is always absolute (the per-channel values are overall values, not
+        corrections on top of the overall value).
+
+        To use the default value, set the threshold (overall or per-channel) to
+        `None`.
+
+        :type: :class:`int` or `4 int tuple`
         :default: None
         :dcraw: ``-k``
         :libraw: :class:`libraw.structs.libraw_output_params_t.user_black`
+                 :class:`libraw.structs.libraw_output_params_t.user_cblack`
+        :raises: :exc:`ValueError` when the value is a tuple, but not length 4.
         """
         return None
+
+    @sensel_threshold.param_writer
+    def sensel_threshold(self, params):
+        if self.sensel_threshold is None:
+            params.user_cblack = (-1, -1, -1, -1)
+            params.user_black = -1
+        else:
+            try:
+                if len(self.sensel_threshold) == 4:
+                    first_black = None
+                    for i in range(0, 4):
+                        if self.sensel_threshold[i] is None:
+                            params.user_cblack[i] = -1
+                        else:
+                            if first_black is None:
+                                first_black = self.sensel_threshold[i]
+                                params.user_cblack[i] = 0
+                            else:
+                                params.user_cblack[i] = self.sensel_threshold[
+                                    i] - first_black
+                    params.user_black = first_black
+                else:
+                    raise ValueError("Sensel threshold must be of length 4")
+            except TypeError:
+                params.user_cblack = (-1, -1, -1, -1)
+                params.user_black = ctypes.c_int(self.sensel_threshold)
 
     @option
     def chromatic_aberration(self):
