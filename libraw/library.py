@@ -1,7 +1,9 @@
-from ctypes import util
-from importlib import import_module
+import libraw
+import os
 import sys
 
+from ctypes import util
+from importlib import import_module
 
 __library__ = util.find_library('raw')
 
@@ -21,3 +23,12 @@ def __load_module__(module_name):
             'Unsupported LibRaw version: {api_version}',
             api_version=__api_version__,
         )
+
+
+def __supported_versions__():
+    versions = []
+    for tree in libraw.__spec__.submodule_search_locations:
+        for module in os.listdir(path=tree):
+            if module.startswith('api_'):
+                versions.append(module.split('_')[1])
+    return versions
