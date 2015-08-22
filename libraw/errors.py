@@ -96,7 +96,9 @@ class BadCrop(Exception):
 
 def check_call(exit_code, func, arguments):
     """
-    Throws a Python error which corresponds to the given LibRaw exit code.
+    Throws a Python error which corresponds to the given LibRaw exit code. This
+    function is called automatically by :class:``libraw`` for methods that
+    call LibRaw functions which returns a :type:``c_error``.
 
     Args:
         exit_code (int): An exit code returned by a LibRaw function.
@@ -124,7 +126,27 @@ def check_call(exit_code, func, arguments):
 
 
 def raise_if_error(error_code):
-    if error_code != 0:
+    """
+    Raises an exception corresponding to the provided LibRaw error code.
+
+    Raises:
+        UnspecifiedError: ``-1``
+        FileUnsupported: ``-2``
+        RequestForNonexistentImage: ``-3``
+        OutOfOrderCall: ``-4``
+        NoThumbnail: ``-5``
+        UnsupportedThumbnail: ``-6``
+        InputClosed: ``-7``
+        InsufficientMemory: ``-100007``
+        DataError: ``-100008``
+        IOError: ``-100009``
+        CanceledByCallback: ``-100010``
+        BadCrop: ``-100011``
+        ValueError: When the error code is unrecognized.
+        OSError: When a positive error code is provided.
+    """
+
+    if error_code < 0:
         raise {
             -1: UnspecifiedError,
             -2: FileUnsupported,
@@ -138,4 +160,6 @@ def raise_if_error(error_code):
             -100009: IOError,
             -100010: CanceledByCallback,
             -100011: BadCrop
-        }[error_code]
+        }.get(error_code, ValueError)
+    elif error_code > 0:
+        raise OSError()
