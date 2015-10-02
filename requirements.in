@@ -1,0 +1,10 @@
+alabaster
+coverage
+flake8
+mock
+pep8
+pre-commit
+Sphinx
+tox
+virtualenv
+wheel

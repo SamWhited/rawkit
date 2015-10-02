@@ -9,9 +9,12 @@ env:
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq libraw-bin
+  - pip install --upgrade pip
 
 install:
-  - pip install -r requirements-dev.txt
+  - pip install pip-tools
+  - pip-compile requirements.in
+  - pip install -r requirements.txt
   - pip install coveralls
 script:
   - make docs

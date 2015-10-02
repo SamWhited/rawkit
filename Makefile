@@ -13,11 +13,19 @@ pre-commit: .git/hooks/pre-commit
 .git/hooks/pre-commit: .pre-commit-config.yaml $(VENV)
 	$(BIN)/pre-commit install
 
-$(VENV): $(VENV)/bin/activate
+.PHONY: $(VENV)
+$(VENV): requirements.txt $(BIN)/pip-sync $(VENV)/bin/activate
+	$(BIN)/pip-sync
 
-$(VENV)/bin/activate: requirements-dev.txt
-	test -d $(VENV) || virtualenv -p /usr/bin/python3 $(VENV)
-	$(BIN)/pip install -r requirements-dev.txt
+requirements.txt: requirements.in $(BIN)/pip-sync
+	$(BIN)/pip-compile $<
+
+$(BIN)/pip-sync: $(BIN)/activate
+	$(BIN)/pip install --upgrade pip
+	$(BIN)/pip install pip-tools
+
+$(BIN)/activate:
+	pyvenv $(VENV)
 	touch $(BIN)/activate
 
 
@@ -57,6 +65,7 @@ clean:
 	rm -rf build
 	rm -rf dist
 	rm -rf $(VENV)
+	rm -f requirements.txt
 
 .PHONY: docs
 docs: epub html $(VENV)
