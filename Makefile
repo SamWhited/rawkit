@@ -1,4 +1,5 @@
 REBUILD_FLAG =
+TEST_CONTAINER=rawkit-base
 VENV=env
 BIN=$(VENV)/bin
 ACTIVATE=source $(BIN)/activate
@@ -31,11 +32,11 @@ $(BIN)/activate:
 
 .PHONY: test
 test: $(VENV)
-	$(BIN)/tox $(REBUILD_FLAG)
+	docker run $(TEST_CONTAINER) tox $(REBUILD_FLAG)
 
 .PHONY: stress-test
 stress-test: $(VENV)
-	INPUT=$(INPUT) $(BIN)/tox -c tox-stress.ini $(REBUILD_FLAG)
+	INPUT=$(INPUT) docker run $(TEST_CONTAINER) tox -c tox-stress.ini $(REBUILD_FLAG)
 
 dist/*.whl: setup.py rawkit/*.py
 	python setup.py bdist_wheel
