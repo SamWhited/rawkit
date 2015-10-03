@@ -1,0 +1,13 @@
+FROM photoshell-wheelhouse
+MAINTAINER Sam Whited <sam@samwhited.com>
+
+COPY Makefile Makefile
+COPY rawkit rawkit
+COPY requirements.in requirements.in
+COPY setup.py setup.py
+COPY tests tests
+COPY tox.ini tox.ini
+
+RUN pip-compile requirements.in
+RUN pip2 install --no-index --find-links wheelhouse/ -r requirements.txt
+RUN pip3 install --no-index --find-links wheelhouse/ -r requirements.txt
