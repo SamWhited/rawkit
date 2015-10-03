@@ -1,13 +1,19 @@
 FROM photoshell-wheelhouse
 MAINTAINER Sam Whited <sam@samwhited.com>
 
+COPY docs docs
+COPY libraw libraw
+COPY LICENSE LICENSE
 COPY Makefile Makefile
+COPY MANIFEST.in MANIFEST.in
 COPY rawkit rawkit
+COPY README.rst README.rst
 COPY requirements.in requirements.in
+COPY setup.cfg setup.cfg
 COPY setup.py setup.py
 COPY tests tests
 COPY tox.ini tox.ini
 
 RUN pip-compile requirements.in
-RUN pip2 install --no-index --find-links wheelhouse/ -r requirements.txt
-RUN pip3 install --no-index --find-links wheelhouse/ -r requirements.txt
+RUN pip2 install --find-links wheelhouse/ -r requirements.txt
+RUN pip3 install --find-links wheelhouse/ -r requirements.txt

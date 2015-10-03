@@ -4,6 +4,7 @@ flake8
 mock
 pep8
 pre-commit
+pytest
 Sphinx
 tox
 virtualenv
