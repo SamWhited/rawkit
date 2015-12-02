@@ -176,7 +176,20 @@ class Raw(object):
         self.libraw.libraw_dcraw_thumb_writer(
             self.data, filename.encode('ascii'))
 
-    def _get_raw(self, image):
+    def _get_raw(self, image):  # pragma: no cover
+        """
+        EXPERIMENTAL
+
+        Read the raw data for the provided image data.
+
+        Args:
+            image: One of color3_image or color4_image
+
+        Returns:
+            list of list: 4 colour data of the image in unit16.
+                          (height x width)
+            str : colour channel description (ie. RGGB, RGBG)
+        """
         sizes = self.data.contents.sizes
 
         if sizes.pixel_aspect != 1:
@@ -229,7 +242,7 @@ class Raw(object):
         return data, cdesc
 
     # TODO: Make a decorator to generate rawdata
-    def get_4_col_raw(self):
+    def get_4_col_raw(self):  # pragma: no cover
         """
         EXPERIMENTAL
 
@@ -268,7 +281,7 @@ class Raw(object):
         return data
 
     # TODO: Make a decorator to generate rawdata
-    def get_3_col_raw(self):
+    def get_3_col_raw(self):  # pragma: no cover
         """
         EXPERIMENTAL
 

@@ -21,8 +21,12 @@ $(VENV)/bin/activate: requirements-dev.txt
 	touch $(BIN)/activate
 
 
+.PHONY: tox
+tox: $(VENV)
+	$(ACTIVATE); pip install tox
+
 .PHONY: test
-test: $(VENV)
+test: $(VENV) tox
 	$(ACTIVATE); tox $(REBUILD_FLAG)
 
 .PHONY: stress-test
