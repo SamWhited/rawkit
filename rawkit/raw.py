@@ -176,7 +176,7 @@ class Raw(object):
         self.libraw.libraw_dcraw_thumb_writer(
             self.data, filename.encode('ascii'))
 
-    def _get_raw(self, image):  # pragma: no cover
+    def _get_raw(self, image):
         """
         EXPERIMENTAL
 
@@ -194,10 +194,12 @@ class Raw(object):
 
         if sizes.pixel_aspect != 1:
             warnings.warn(
-                "The pixel aspect is not unity, it is:" + sizes.pixel_aspect)
+                "The pixel aspect is not unity, it is: " +
+                str(sizes.pixel_aspect)
+            )
 
         if sizes.flip != 0:
-            raise NotImplemented("Does not support rotations in the image")
+            raise NotImplementedError
 
         # Get raw image size
         raw_width = sizes.raw_width
@@ -242,7 +244,7 @@ class Raw(object):
         return data, cdesc
 
     # TODO: Make a decorator to generate rawdata
-    def get_4_col_raw(self):  # pragma: no cover
+    def get_4_col_raw(self):
         """
         EXPERIMENTAL
 
@@ -275,13 +277,13 @@ class Raw(object):
         # cameras
         try:
             data = self._get_raw(rawdata.color4_image.contents)
-        except ValueError:
+        except ValueError:  # pragma: no cover
             data = None
 
         return data
 
     # TODO: Make a decorator to generate rawdata
-    def get_3_col_raw(self):  # pragma: no cover
+    def get_3_col_raw(self):
         """
         EXPERIMENTAL
 
@@ -316,7 +318,7 @@ class Raw(object):
         # cameras
         try:
             data = self._get_raw(rawdata.color3_image.contents)
-        except ValueError:
+        except ValueError:  # pragma: no cover
             data = None
 
         return data
